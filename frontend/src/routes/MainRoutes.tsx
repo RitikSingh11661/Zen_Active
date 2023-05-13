@@ -4,6 +4,7 @@ import { Login } from '../pages/Login'
 import { Signup } from '../pages/Signup'
 import { NotFound } from '../pages/NotFound'
 import { Profile } from '../pages/Profile'
+import { PrivateRoute } from './PrivateRoute'
 
 export const MainRoutes = () => {
   return (
@@ -11,7 +12,7 @@ export const MainRoutes = () => {
         <Route path='/' element={<Homepage/>}/>
         <Route path='/login' element={<Login/>}/>
         <Route path='/signup' element={<Signup/>}/>     
-        <Route path='/profile' element={<Profile/>}/>     
+        <Route path='/profile' element={<PrivateRoute><Profile/></PrivateRoute>}/>     
         <Route path='*' element={<NotFound/>}/>
     </Routes>
   )
