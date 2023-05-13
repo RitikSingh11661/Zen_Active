@@ -7,10 +7,11 @@ import {
     POST_SIGNIN_SUCCESS,
     SET_LOGIN_REQUEST,
     SET_LOGOUT_REQUEST,
+    UPDATE_USER_SUCCESS,
   } from "./actionTypes";
   
   let key = localStorage.getItem("isAuth");
-  const initialState = {user:{name:'ritik',image:'ritik.jpg',email:'ritik@gmail.com'},users: [],isAuth: key || false,isLoading: false,isError: false};
+  const initialState = {user:{},users: [],isAuth: key || false,isLoading: false,isError: false};
   
   export const reducer = (state = initialState,{type, payload}:{type:string,payload:any}) => {
     switch (type) {
@@ -23,13 +24,15 @@ import {
       case GET_USER_REQUEST:
         return { ...state, isLoading: true };
       case GET_USER_SUCCESS:
-        return { ...state, isLoading: false, isError: false, users: payload };
+        return { ...state, isLoading: false, isError: false, user: payload };
       case GET_USER_FAILURE:
         return { ...state, isLoading: false, isError: true };
       case SET_LOGIN_REQUEST:
         return { ...state, isAuth: true };
       case SET_LOGOUT_REQUEST:
         return { ...state, isAuth: false };
+      case UPDATE_USER_SUCCESS:
+        return {...state,user:payload}  
       default:
         return state;
     }

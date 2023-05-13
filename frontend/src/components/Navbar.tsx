@@ -12,9 +12,8 @@ interface NavLink { name: string; path: string }
 
 export const Navbar: React.FC = () => {
   const dispatch = useDispatch();
-  const isAuth = useSelector((store:RootStateType)=>store.AuthReducer.isAuth);
+  const {isAuth,user} = useSelector((store:RootStateType)=>store.AuthReducer);
   const [isOpen, setIsOpen] = useState(false);
-  const [userData, setUserData] = useState({ image: 'fdf', name: 'ritik' })
   const navigate = useNavigate();
 
   const navLinks: NavLink[] = [
@@ -29,10 +28,8 @@ export const Navbar: React.FC = () => {
   const toggleMenu = () => { setIsOpen(!isOpen) };
 
   interface User { name: string };
-  const user: User = { name: 'logout' };
-
   const handleLogout = () => {
-    (dispatch as ThunkDispatch<any, any, AnyAction>)(setLogout(user));
+    (dispatch as ThunkDispatch<any, any, AnyAction>)(setLogout);
   };
 
   return (
@@ -56,10 +53,10 @@ export const Navbar: React.FC = () => {
               {isAuth && <Flex alignItems="center">
                 <Menu><MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>
                   <HStack>
-                    <Avatar size="sm" src={userData?.image} />
+                    <Avatar size="sm" src={user?.image} />
                     <VStack
                       display={{ base: 'none', md: 'flex' }} alignItems="flex-start" spacing="1px" ml="2">
-                      <Text fontSize="large" color="gray.600">{userData?.name}</Text>
+                      <Text fontSize="large" color="gray.600">{user?.name}</Text>
                     </VStack>
                     <Box display={{ base: 'none', md: 'flex' }}><FiChevronDown /></Box>
                   </HStack>

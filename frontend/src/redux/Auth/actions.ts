@@ -1,6 +1,7 @@
 import axios from "axios";
-import {GET_USER_FAILURE,GET_USER_REQUEST,GET_USER_SUCCESS,POST_SIGNIN_FAILURE,POST_SIGNIN_REQUEST,POST_SIGNIN_SUCCESS,SET_LOGIN_REQUEST,SET_LOGOUT_REQUEST} from "./actionTypes";
-import { AnyAction } from "redux";
+import {GET_USER_FAILURE,GET_USER_REQUEST,GET_USER_SUCCESS,POST_SIGNIN_FAILURE,POST_SIGNIN_REQUEST,POST_SIGNIN_SUCCESS,SET_LOGIN_REQUEST,SET_LOGOUT_REQUEST, UPDATE_USER_SUCCESS} from "./actionTypes";
+import { AnyAction, Dispatch } from "redux";
+import jwtDecode from "jwt-decode";
 
 // signup actions
 export const signupRequestAction=()=>({type:POST_SIGNIN_REQUEST})
@@ -14,10 +15,10 @@ export const userFailureAction = () => ({ type: GET_USER_FAILURE });
 export const setLoginAction = () => ({ type: SET_LOGIN_REQUEST });
 export const setLogoutAction = () => ({ type: SET_LOGOUT_REQUEST });
 
-// signup function
+export const updateUserAction = (payload:any) => ({ type: UPDATE_USER_SUCCESS,payload});
+
 interface UserSignup {name: string;email: string;password: string;city: string}
 interface UserLogin {email: string;password: string}
-interface UserLogout {name:String}
 
 export const signup = (user:UserSignup) => async (dispatch: (action:AnyAction) => void) => {
   dispatch(signupRequestAction());
@@ -51,12 +52,29 @@ export const setLogin = (user:UserLogin) => async(dispatch: any) => {
   }
 };
 
-export const setLogout = (user:UserLogout)=>(dispatch: any) => {
+export const setLogout = (dispatch: any) => {
   dispatch(setLogoutAction());
   localStorage.clear();
 };
 
-export const getUserDetails=()=>(dispatch: any)=>{
-   const token = localStorage.getItem('token')
-   
+export const getUserDetails=(dispatch: Dispatch)=>{
+  const token = localStorage.getItem('token');
+  if(token){
+    const decoded: any = jwtDecode(token);
+    // console.log('decoded', decoded);
+    dispatch(userSuccessAction(decoded.user))
+  }
+}
+
+export const updateUser=(user:any)=>async(dispatch: Dispatch)=>{
+  console.log('user',user)
+  try {
+    const { data } = await axios.patch(`${process.env.REACT_APP_API_AI}/users/update/${user._id}`, JSON.stringify(user), {
+      headers: { 'Content-Type': 'application/json',token:localStorage.getItem('token') }
+    });
+    console.log('data',data)
+    dispatch(updateUserAction(user));
+  } catch (error) {
+  console.log('error',error)
+  }
 }

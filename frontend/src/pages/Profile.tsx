@@ -1,21 +1,26 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useRef, useState } from 'react';
+import {  useDispatch, useSelector } from 'react-redux';
 import { RootStateType } from '../redux/store';
 import { Button, Input, Select } from '@chakra-ui/react';
+import { updateUser } from '../redux/Auth/actions';
+import { AnyAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 interface ProfilePageProps {
-  // Add any necessary props
+// Add any necessary props
 }
-
 interface HealthInformation { bloodGroup: string; weight: string; height: string }
 interface FitnessGoals { weightLoss: boolean; muscleGain: boolean; improvedCardio: boolean }
 
 export const Profile: React.FC<ProfilePageProps> = () => {
   const user = useSelector((store: RootStateType) => store.AuthReducer.user);
+  const [detail,setDetail] = useState({name:'',email:'',password:'',city:'',_id:''})
+  console.log('user',user)
+  let userRef = useRef(user)
+  const dispatch = useDispatch();
   const [healthInfo, setHealthInfo] = useState<HealthInformation>({ bloodGroup: '', weight: '', height: '' });
   const [fitnessGoals, setFitnessGoals] = useState<FitnessGoals>({ weightLoss: false, muscleGain: false, improvedCardio: false });
   
-
   const handleHealthInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setHealthInfo((prevInfo) => ({ ...prevInfo, [name]: value }));
@@ -28,11 +33,22 @@ export const Profile: React.FC<ProfilePageProps> = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-
-    console.log('Submitted health info:', healthInfo);
-    console.log('Submitted fitness goals:', fitnessGoals);
+    // setDetail({...detail,healthInfo,fitnessGoals});
+    const details = {...detail,...healthInfo,...fitnessGoals}
+    console.log('details',details);
+    (dispatch as ThunkDispatch<any, any, AnyAction>)(updateUser(details));
   };
+
+  useEffect(() => {
+    userRef.current = user;
+    if(userRef.current.healthInfo && userRef.current.fitnessGoals){
+       setDetail({name:userRef.current.name,email:userRef.current.email,password:userRef.current.password,city:userRef.current.city,_id:userRef.current._id})
+       setHealthInfo(userRef.current.healthInfo);
+       setFitnessGoals(userRef.current.fitnessGoals);
+    }
+  }, [user]);
+  console.log('healthInfo',healthInfo)
+  console.log('fitnessGoals',fitnessGoals)
 
   return (
     <div className="container mx-auto p-4">
