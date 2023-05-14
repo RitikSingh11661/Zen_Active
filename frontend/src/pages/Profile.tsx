@@ -10,7 +10,11 @@ interface ProfilePageProps {
 // Add any necessary props
 }
 interface HealthInformation { bloodGroup: string; weight: string; height: string }
-interface FitnessGoals { weightLoss: boolean; muscleGain: boolean; improvedCardio: boolean }
+interface FitnessGoals {
+  weightLoss: { status: boolean; weightLossStatuses: {} };
+  muscleGain: { status: boolean; muscleGainStatuses: {} };
+  improvedCardio: { status: boolean; improvedCardioStatuses: {} };
+}
 
 export const Profile: React.FC<ProfilePageProps> = () => {
   const user = useSelector((store: RootStateType) => store.AuthReducer.user);
@@ -19,7 +23,7 @@ export const Profile: React.FC<ProfilePageProps> = () => {
   let userRef = useRef(user)
   const dispatch = useDispatch();
   const [healthInfo, setHealthInfo] = useState<HealthInformation>({ bloodGroup: '', weight: '', height: '' });
-  const [fitnessGoals, setFitnessGoals] = useState<FitnessGoals>({ weightLoss: false, muscleGain: false, improvedCardio: false });
+  const [fitnessGoals, setFitnessGoals] = useState<FitnessGoals>({weightLoss:{status:false,weightLossStatuses:{}}, muscleGain:{status:false,muscleGainStatuses:{}}, improvedCardio:{status:false,improvedCardioStatuses:{}} });
   
   const handleHealthInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -33,9 +37,7 @@ export const Profile: React.FC<ProfilePageProps> = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // setDetail({...detail,healthInfo,fitnessGoals});
-    const details = {...detail,...healthInfo,...fitnessGoals}
-    console.log('details',details);
+    const details = {...detail,healthInfo,fitnessGoals};
     (dispatch as ThunkDispatch<any, any, AnyAction>)(updateUser(details));
   };
 
@@ -100,14 +102,14 @@ export const Profile: React.FC<ProfilePageProps> = () => {
             onChange={handleHealthInfoChange}
           />
         </div>
-        <div>
+        {/* <div>
           <label htmlFor="weightLoss" className="text-lg font-semibold">
             Fitness Goals - Weight Loss:
           </label>
           <Select
             id="weightLoss"
             name="weightLoss"
-            value={fitnessGoals.weightLoss.toString()}
+            value={fitnessGoals?.weightLoss?.status.toString()}
             onChange={handleFitnessGoalChange}
           >
             <option value="true">Yes</option>
@@ -121,7 +123,7 @@ export const Profile: React.FC<ProfilePageProps> = () => {
           <Select
             id="muscleGain"
             name="muscleGain"
-            value={fitnessGoals.muscleGain.toString()}
+            value={fitnessGoals?.muscleGain?.status.toString()}
             onChange={handleFitnessGoalChange}
           >
             <option value="true">Yes</option>
@@ -135,13 +137,13 @@ export const Profile: React.FC<ProfilePageProps> = () => {
           <Select
             id="improvedCardio"
             name="improvedCardio"
-            value={fitnessGoals.improvedCardio.toString()}
+            value={fitnessGoals?.improvedCardio?.status.toString()}
             onChange={handleFitnessGoalChange}
           >
             <option value="true">Yes</option>
             <option value="false">No</option>
           </Select>
-        </div>
+        </div> */}
         <Button colorScheme="blue" type="submit">Save Changes</Button>
       </form>
     </div>
