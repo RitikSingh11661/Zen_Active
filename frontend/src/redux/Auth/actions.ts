@@ -12,7 +12,7 @@ export const signupFailureAction = () => ({ type: POST_SIGNIN_FAILURE });
 export const userRequestAction = () => ({ type: GET_USER_REQUEST });
 export const userSuccessAction = (payload: any) => ({ type: GET_USER_SUCCESS, payload });
 export const userFailureAction = () => ({ type: GET_USER_FAILURE });
-export const setLoginAction = () => ({ type: SET_LOGIN_REQUEST });
+export const setLoginAction = (payload:object) => ({ type: SET_LOGIN_REQUEST,payload});
 export const setLogoutAction = () => ({ type: SET_LOGOUT_REQUEST });
 
 export const updateUserAction = (payload:any) => ({ type: UPDATE_USER_SUCCESS,payload});
@@ -35,16 +35,14 @@ export const signup = (user:UserSignup) => async (dispatch: (action:AnyAction) =
 };
 
 export const setLogin = (user:UserLogin) => async(dispatch: any) => {
-  console.log('user',user)
   const userType = user?.email?.includes('admin') ? 'admins' : 'users';
   try {
     const { data } = await axios.post(`${process.env.REACT_APP_API_AI}/${userType}/login`, JSON.stringify(user), {
       headers: { 'Content-Type': 'application/json' },
     });
     localStorage.setItem('token', data.token);
-    localStorage.setItem('userrole', data.role);
     localStorage.setItem("isAuth", 'yes');
-    dispatch(setLoginAction());   
+    dispatch(setLoginAction(data.data));   
     return data;
   } catch (error) {
     console.log('error', error);
@@ -57,12 +55,14 @@ export const setLogout = (dispatch: any) => {
   localStorage.clear();
 };
 
-export const getUserDetails=(dispatch: Dispatch)=>{
+export const getUserDetails=async(dispatch: Dispatch)=>{
   const token = localStorage.getItem('token');
   if(token){
-    const decoded: any = jwtDecode(token);
-    console.log('decoded',decoded)
-    dispatch(userSuccessAction(decoded.user))
+    const {userId}: any = jwtDecode(token);
+    try {
+      const { data } = await axios.get(`${process.env.REACT_APP_API_AI}/users/${userId}`);
+      dispatch(userSuccessAction(data.data))         
+    } catch (error) {console.log('error',error)}
   }
 }
 

@@ -27,7 +27,6 @@ export const Navbar: React.FC = () => {
 
   const toggleMenu = () => { setIsOpen(!isOpen) };
 
-  interface User { name: string };
   const handleLogout = () => {
     (dispatch as ThunkDispatch<any, any, AnyAction>)(setLogout);
   };

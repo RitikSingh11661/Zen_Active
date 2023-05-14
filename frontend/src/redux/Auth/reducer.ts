@@ -28,7 +28,7 @@ import {
       case GET_USER_FAILURE:
         return { ...state, isLoading: false, isError: true };
       case SET_LOGIN_REQUEST:
-        return { ...state, isAuth: true };
+        return { ...state, isAuth: true,user:payload};
       case SET_LOGOUT_REQUEST:
         return { ...state, isAuth: false };
       case UPDATE_USER_SUCCESS:
