@@ -11,28 +11,30 @@ interface ProfilePageProps {
 }
 interface HealthInformation { bloodGroup: string; weight: string; height: string }
 interface FitnessGoals {
-  weightLoss: { status: boolean; weightLossStatuses: {} };
-  muscleGain: { status: boolean; muscleGainStatuses: {} };
-  improvedCardio: { status: boolean; improvedCardioStatuses: {} };
+  weightLoss: { status: boolean; weightLossStatuses:any};
+  muscleGain: { status: boolean; muscleGainStatuses:any};
+  improvedCardio: { status: boolean; improvedCardioStatuses:any};
 }
 
 export const Profile: React.FC<ProfilePageProps> = () => {
   const user = useSelector((store: RootStateType) => store.AuthReducer.user);
   const [detail,setDetail] = useState({name:'',email:'',password:'',city:'',_id:''})
-  console.log('user',user)
   let userRef = useRef(user)
   const dispatch = useDispatch();
   const [healthInfo, setHealthInfo] = useState<HealthInformation>({ bloodGroup: '', weight: '', height: '' });
   const [fitnessGoals, setFitnessGoals] = useState<FitnessGoals>({weightLoss:{status:false,weightLossStatuses:{}}, muscleGain:{status:false,muscleGainStatuses:{}}, improvedCardio:{status:false,improvedCardioStatuses:{}} });
   
   const handleHealthInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setHealthInfo((prevInfo) => ({ ...prevInfo, [name]: value }));
+    let { name, value } = e.target;
+    setHealthInfo((prevInfo) => ({ ...prevInfo,[name]:value}));
   };
 
   const handleFitnessGoalChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFitnessGoals((prevGoals) => ({ ...prevGoals, [name]: value === 'true' }));
+    let { name, value } = e.target,goalWorkoutNameObj=`${name}Statuses`,workoutsObj={}
+    if(name=='weightLoss')workoutsObj=fitnessGoals.weightLoss.weightLossStatuses;
+    else if(name=='muscleGain')workoutsObj=fitnessGoals.muscleGain.muscleGainStatuses;
+    else if(name=='improvedCardio')workoutsObj=fitnessGoals.improvedCardio.improvedCardioStatuses;
+    setFitnessGoals((prevGoals)=>({...prevGoals,[name]:{status:value==='true',[goalWorkoutNameObj]:workoutsObj}}))
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -49,8 +51,6 @@ export const Profile: React.FC<ProfilePageProps> = () => {
        setFitnessGoals(userRef.current.fitnessGoals);
     }
   }, [user]);
-  console.log('healthInfo',healthInfo)
-  console.log('fitnessGoals',fitnessGoals)
 
   return (
     <div className="container mx-auto p-4">
@@ -102,7 +102,7 @@ export const Profile: React.FC<ProfilePageProps> = () => {
             onChange={handleHealthInfoChange}
           />
         </div>
-        {/* <div>
+        <div>
           <label htmlFor="weightLoss" className="text-lg font-semibold">
             Fitness Goals - Weight Loss:
           </label>
@@ -143,7 +143,7 @@ export const Profile: React.FC<ProfilePageProps> = () => {
             <option value="true">Yes</option>
             <option value="false">No</option>
           </Select>
-        </div> */}
+        </div>
         <Button colorScheme="blue" type="submit">Save Changes</Button>
       </form>
     </div>

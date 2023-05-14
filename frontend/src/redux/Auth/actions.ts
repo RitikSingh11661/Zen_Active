@@ -61,20 +61,21 @@ export const getUserDetails=(dispatch: Dispatch)=>{
   const token = localStorage.getItem('token');
   if(token){
     const decoded: any = jwtDecode(token);
-    // console.log('decoded', decoded);
+    console.log('decoded',decoded)
     dispatch(userSuccessAction(decoded.user))
   }
 }
 
 export const updateUser=(user:any)=>async(dispatch: Dispatch)=>{
-  console.log('user',user)
+  // console.log('user',user)
   try {
     const { data } = await axios.patch(`${process.env.REACT_APP_API_AI}/users/update/${user._id}`, JSON.stringify(user), {
       headers: { 'Content-Type': 'application/json',token:localStorage.getItem('token') }
     });
-    console.log('data',data)
     dispatch(updateUserAction(user));
-  } catch (error) {
+    alert(data.msg)
+  } catch (error:any) {
   console.log('error',error)
+  alert(error.msg)
   }
 }
