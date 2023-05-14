@@ -11,3 +11,6 @@ export const GET_USER_FAILURE = "GET_USER_FAILURE" as const;
 
 export const UPDATE_USER_SUCCESS = "UPDATE_USER_SUCCESS" as const;
 
+export const GET_WORKOUTS_SUCCESS = "GET_WORKOUTS_SUCCESS" as const;
+
+
