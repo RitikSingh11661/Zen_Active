@@ -12,24 +12,17 @@ interface NavLink { name: string; path: string }
 
 export const Navbar: React.FC = () => {
   const dispatch = useDispatch();
-  const {isAuth,user} = useSelector((store:RootStateType)=>store.AuthReducer);
+  const { isAuth, user } = useSelector((store: RootStateType) => store.AuthReducer);
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
-  const navLinks: NavLink[] = [
-    { name: 'Home', path: '/' },
-    { name: 'Workout', path: '/workout' },
-    { name: 'Nutrition', path: '/nutrition' },
-    { name: 'Community', path: '/community' }
-  ];
+  const navLinks: NavLink[] = [{ name: 'Home', path: '/' }, { name: 'Workouts', path: '/workouts' }, { name: 'Nutrition', path: '/nutrition' }, { name: 'Community', path: '/community' }];
 
-  if(!isAuth)navLinks.push({name:'Login', path:'/login'});
+  if (!isAuth) navLinks.push({ name: 'Login', path: '/login' });
 
   const toggleMenu = () => { setIsOpen(!isOpen) };
 
-  const handleLogout = () => {
-    (dispatch as ThunkDispatch<any, any, AnyAction>)(setLogout);
-  };
+  const handleLogout = () => { (dispatch as ThunkDispatch<any, any, AnyAction>)(setLogout) };
 
   return (
     <nav className="bg-blue-500">
@@ -61,7 +54,7 @@ export const Navbar: React.FC = () => {
                   </HStack>
                 </MenuButton>
                   <MenuList bg={'white'} borderColor={'gray.200'}>
-                    <MenuItem onClick={()=>{navigate('/profile')}}>Profile</MenuItem>
+                    <MenuItem onClick={() => { navigate('/profile') }}>Profile</MenuItem>
                     <MenuDivider />
                     <MenuItem onClick={handleLogout}>Sign out</MenuItem>
                   </MenuList>
